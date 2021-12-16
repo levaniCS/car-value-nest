@@ -1,5 +1,14 @@
-# Create a new user
+### Create a new user
 POST http://localhost:3000/auth/signup
+Content-Type: application/json
+
+{
+  "email": "test@gmail.com",
+  "password": "testpassword"
+}
+
+### Sign in user
+POST http://localhost:3000/auth/signin
 Content-Type: application/json
 
 {
@@ -28,4 +37,9 @@ Content-Type: application/json
 }
 
 
+### Get currently signed in user 
+GET http://localhost:3000/auth/whoami
 
+
+### Sign out user 
+POST http://localhost:3000/auth/signout
