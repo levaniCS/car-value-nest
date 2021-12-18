@@ -8,7 +8,8 @@ import {
   Delete,
   Body,
   Session,
-  UseGuards
+  UseGuards,
+  NotFoundException
 } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
@@ -19,7 +20,7 @@ import { UserDto } from './dtos/user.dto'
 import { AuthService } from './auth.service'
 import { CurrentUser } from './decorators/current-user.decorator';
 import { User } from './user.entity';
-import { AuthGuard } from 'src/guards/auth-guard';
+import { AuthGuard } from '../guards/auth-guard';
 
 
 @Controller('auth')
@@ -56,8 +57,14 @@ export class UsersController {
   }
 
   @Get('/:id')
-  findUser(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  async findUser(@Param('id') id: string) {
+    const user = await this.usersService.findOne(+id);
+
+    if(!user) {
+      throw new NotFoundException('user not found');
+    }
+
+    return user
   }
 
   @Get()
