@@ -13,7 +13,7 @@ import { Report } from './reports/report.entity';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
+    ConfigModule.forRoot({ 
       isGlobal: true,
       envFilePath: `.env.${process.env.NODE_ENV}`
     }),
@@ -24,7 +24,11 @@ import { Report } from './reports/report.entity';
           type: 'sqlite',
           database: config.get('DB_NAME'),
           entities: [User, Report],
-          synchronize: true
+          // IMPORTANT
+          // Whenever our app starts up typeorm is goin to look at user( and report) entity
+          // all the properties and types and check status of DB and make sure db has exact all the same properties as user entity
+          // EXAMPLE: If we delete/add userEmail field from entity file, with help of this property typeorm automatically deletes/adds userEmail field from db records
+          synchronize: true 
         }
       }
     }),
@@ -37,7 +41,7 @@ import { Report } from './reports/report.entity';
     {
       provide: APP_PIPE,
       useValue: new ValidationPipe({
-        // TOMAKE SURE INCOMING REUQEST DOESN'T HAVE OTHER PROPERTIES
+        // TO MAKE SURE INCOMING REUQEST DOESN'T HAVE OTHER PROPERTIES
         // THEY WILL AUTOMATICALLY REMOVED
         whitelist: true
       })
@@ -45,10 +49,11 @@ import { Report } from './reports/report.entity';
   ],
 })
 export class AppModule {
+  constructor(private config: ConfigService) {}
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(
       cookieSession({
-        keys: ['RANDOMNUMBERSANDLETTERS']
+        keys: [this.config.get('COOKIE_KEY')]
       })
       // Configure this middleware for every route
     ).forRoutes('*');

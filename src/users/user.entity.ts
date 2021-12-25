@@ -1,4 +1,4 @@
-import { Report } from 'src/reports/report.entity';
+import { Report } from '../reports/report.entity';
 import {
   Entity,
   Column,
@@ -22,6 +22,9 @@ export class User {
 
   @OneToMany(() => Report, (report: Report) => report.user)
   reports: Report[];
+
+  @Column({ default: true })
+  admin: boolean; 
 
   // This hooks only runs when we save user instance into database
   // If we save user data as plain object this won't run hooks 
